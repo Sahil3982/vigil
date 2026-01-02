@@ -17,4 +17,4 @@
 
 ### One-liner (Linux/macOS):
 ```bash
-curl -sfL https://raw.githubusercontent.com/yourname/vigil/main/install.sh | sh
+curl -sfL https://raw.githubusercontent.com/sahil3982/vigil/main/install.sh | sh
