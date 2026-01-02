@@ -1,48 +1,21 @@
-name: Release
-on:
-  push:
-    tags:
-      - 'v*'
-
-permissions:
-  contents: write
-  
-jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.23'
-
-      - name: Build Binaries
-        run: |
-          mkdir -p dist
-          for os in linux darwin windows; do
-            for arch in amd64 arm64; do
-              if [ "$os" = "windows" ]; then ext=".exe"; else ext=""; fi
-              GOOS=$os GOARCH=$arch CGO_ENABLED=0 \
-                go build -ldflags="-s -w" -o "dist/vigil${ext}" .
-              tar -czf "dist/vigil_${{ github.ref_name }}_${os}_${arch}.tar.gz" -C dist "vigil${ext}"
-            done
-          done
-
-      - name: Add install.sh to release
-        run: |
-          cp install.sh dist/
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*
-          body: |
-            ## 🕵️ vigil v${{ github.ref_name }}
-            Lightweight system monitor for terminals.
-            - CPU, Memory, Disk usage
-            - Profile any command: `vigil exec -- go build`
-            - Cross-platform: Linux, macOS, Windows, ARM64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+- name: Build & Package Binaries
+  run: |
+    mkdir -p dist
+    for os in linux darwin windows; do
+      for arch in amd64 arm64; do
+        echo "Building $os/$arch..."
+        bin="vigil"
+        if [ "$os" = "windows" ]; then bin="vigil.exe"; fi
+        
+        # Create a clean folder for this build
+        stage="$(mktemp -d)"
+        GOOS=$os GOARCH=$arch CGO_ENABLED=0 \
+          go build -ldflags="-s -w" -o "$stage/$bin" .
+        
+        # Package the binary (named 'vigil' or 'vigil.exe') into .tar.gz
+        tar -czf "dist/vigil_${{ github.ref_name }}_${os}_${arch}.tar.gz" -C "$stage" "$bin"
+        
+        # Cleanup
+        rm -rf "$stage"
+      done
+    done
