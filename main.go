@@ -1,7 +1,9 @@
-package vigil
+package main
 
-import "fmt"
+import (
+	"github.com/sahil3982/vigil/cmd"
+)
 
 func main() {
-	fmt.Println("Vigil module initialized")
+	cmd.Execute()
 }
