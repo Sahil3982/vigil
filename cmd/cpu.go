@@ -1,42 +1,47 @@
+// cmd/cpu.go
 package cmd
 
 import (
-	"fmt"
+	"os"
 	"time"
 
-	"github.com/fatih/color"
+	"github.com/sahil3982/vigil/internal/format"
+
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/spf13/cobra"
 )
 
 var cpuCmd = &cobra.Command{
 	Use:   "cpu",
-	Short: "Show CPU usage",
+	Short: "Show CPU usage percentage",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Seed first reading
+		// Prime the pump (first call returns 0 on some systems)
 		_, _ = cpu.Percent(0, false)
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 
-		percent, err := cpu.Percent(500*time.Millisecond, false)
-		if err != nil {
-			panic(err)
+		percent, err := cpu.Percent(300*time.Millisecond, false)
+		if err != nil || len(percent) == 0 {
+			// Fallback: try per-core and average
+			percent, err = cpu.Percent(500*time.Millisecond, true)
+			if err != nil || len(percent) == 0 {
+				os.Exit(1)
+			}
+			sum := 0.0
+			for _, p := range percent {
+				sum += p
+			}
+			percent = []float64{sum / float64(len(percent))}
 		}
 
-		p := percent[0]
-		if jsonFlag {
-			fmt.Printf(`{"cpu_percent": %.2f}`, p)
-			return
+		stat := format.CPUStat{
+			Percent: percent[0],
+			Cores:   len(percent),
 		}
 
-		bar := barFor(p, 100)
-		status := "✅"
-		if p > 80 {
-			status = "⚠️"
+		f := format.New(jsonFlag, quiet)
+		if err := f.CPU(os.Stdout, stat); err != nil {
+			os.Exit(1)
 		}
-		if p > 95 {
-			status = "🔥"
-		}
-		color.Cyan("▶ CPU: %s %.1f%% %s", bar, p, status)
 	},
 }
 
