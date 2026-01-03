@@ -131,21 +131,3 @@ MIT © [Sahil](https://github.com/sahil3982)
 PRs welcome! Check out the issues or suggest new features.
 ```
 
----
-
-### 🔍 **Key Additions Made:**
-
-1. **✅ Windows Install Instructions** (PowerShell + Git Bash)
-2. **🖥️ Usage Examples** (real commands users will run)
-3. **🌐 Live Dashboard Section** (how to use `vigil serve`)
-4. **🎯 "Why `vigil`?" Section** (explains the value proposition)
-5. **🔗 Remote Monitoring Guide** (SSH tunnel for cloud servers)
-
-This README now clearly explains:
-- **What `vigil` does**
-- **How to install on all platforms**
-- **How to use it (with examples)**
-- **How to run the live dashboard**
-- **Why it's useful for different user types**
-
-Perfect for new users discovering your tool! 🚀
