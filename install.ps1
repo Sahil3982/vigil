@@ -31,12 +31,12 @@ try {
     # Download
     Invoke-WebRequest -Uri $Url -OutFile $ZipPath
 
-    # Extract
+    # Extract using PowerShell (instead of tar)
     $ExtractDir = Join-Path $TempDir "extract"
     New-Item -ItemType Directory -Path $ExtractDir -Force | Out-Null
 
-    # Use tar (available in PowerShell 5.1+) to extract
-    tar -xzf $ZipPath -C $ExtractDir
+    # ✅ Use PowerShell's built-in archive extractor
+    Expand-Archive -Path $ZipPath -DestinationPath $ExtractDir -Force
 
     # Create install dir
     New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
