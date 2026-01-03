@@ -32,7 +32,7 @@ URL="https://github.com/sahil3982/vigil/releases/download/${VIGIL_VERSION}/vigil
 
 echo "📥 Downloading vigil ${VIGIL_VERSION} for ${OS}/${ARCH}..."
 
-# 🔧 FIX: Download to temp file first (avoids pipe issues)
+# ✅ FIXED: Download to temp file first (avoids pipe issues)
 tmpfile="$(mktemp -t vigil.XXXXXX.tar.gz)"
 curl -sfL "$URL" -o "$tmpfile"
 tar -xzf "$tmpfile" -C /tmp
@@ -51,5 +51,6 @@ else
     sudo install -m 755 "/tmp/$BIN_NAME" "$VIGIL_PREFIX/$BIN_NAME"
 fi
 
+# Cleanup
 rm -f "/tmp/vigil" "/tmp/vigil.exe"
 echo "✅ Done! Try running: vigil"

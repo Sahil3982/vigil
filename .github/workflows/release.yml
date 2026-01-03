@@ -43,9 +43,10 @@ jobs:
             done
           done
 
-      - name: Add install.sh to release
+      - name: Add install scripts to release
         run: |
           cp install.sh dist/
+          cp install.ps1 dist/  # ✅ ADD THIS LINE
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
