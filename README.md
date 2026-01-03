@@ -18,3 +18,10 @@
 ### One-liner (Linux/macOS):
 ```bash
 curl -sfL https://raw.githubusercontent.com/sahil3982/vigil/main/install.sh | sh
+
+
+## 🚀 Install on Windows
+
+### PowerShell (Recommended)
+```powershell
+iwr -useb https://raw.githubusercontent.com/sahil3982/vigil/main/install.ps1 | iex
