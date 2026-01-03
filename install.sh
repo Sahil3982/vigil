@@ -28,13 +28,29 @@ if [ "$VIGIL_VERSION" = "latest" ]; then
     fi
 fi
 
-URL="https://github.com/sahil3982/vigil/releases/download/${VIGIL_VERSION}/vigil_${VIGIL_VERSION#v}_${OS}_${ARCH}.tar.gz"
+# Extract version number (remove 'v' prefix if present)
+VERSION_NUMBER="${VIGIL_VERSION#v}"
+
+# Try two possible URL patterns
+URL1="https://github.com/sahil3982/vigil/releases/download/${VIGIL_VERSION}/vigil_${VERSION_NUMBER}_${OS}_${ARCH}.tar.gz"
+URL2="https://github.com/sahil3982/vigil/releases/download/${VIGIL_VERSION}/vigil_v${VERSION_NUMBER}_${OS}_${ARCH}.tar.gz"
 
 echo "📥 Downloading vigil ${VIGIL_VERSION} for ${OS}/${ARCH}..."
 
-# ✅ FIXED: Download to temp file first (avoids pipe issues)
+# Try first URL, fall back to second
 tmpfile="$(mktemp -t vigil.XXXXXX.tar.gz)"
-curl -sfL "$URL" -o "$tmpfile"
+if curl -sfL "$URL1" -o "$tmpfile"; then
+    echo "✅ Downloaded from pattern: vigil_${VERSION_NUMBER}_${OS}_${ARCH}.tar.gz"
+elif curl -sfL "$URL2" -o "$tmpfile"; then
+    echo "✅ Downloaded from pattern: vigil_v${VERSION_NUMBER}_${OS}_${ARCH}.tar.gz"
+else
+    echo "❌ Failed to download from either URL pattern" >&2
+    echo "Tried:" >&2
+    echo "  $URL1" >&2
+    echo "  $URL2" >&2
+    exit 1
+fi
+
 tar -xzf "$tmpfile" -C /tmp
 rm -f "$tmpfile"
 
@@ -53,4 +69,4 @@ fi
 
 # Cleanup
 rm -f "/tmp/vigil" "/tmp/vigil.exe"
-echo "✅ Done! Try running: vigil"
+echo "✅ Done! Try running: vigil --help"
