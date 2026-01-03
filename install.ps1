@@ -4,9 +4,7 @@ param(
     [string]$InstallDir = "$env:USERPROFILE\.vigil"
 )
 
-# Detect architecture
 $Arch = if ([Environment]::Is64BitOperatingSystem) { "amd64" } else { "386" }
-
 if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") {
     $Arch = "arm64"
 }
@@ -15,33 +13,31 @@ if ($Version -eq "latest") {
     Write-Host "🔍 Fetching latest version..." -ForegroundColor Cyan
     $ReleaseInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/sahil3982/vigil/releases/latest"
     $Version = $ReleaseInfo.tag_name
+    if (-not $Version) {
+        Write-Error "❌ No release found"
+        exit 1
+    }
 }
 
 $Version = $Version.TrimStart('v')
-
 $Url = "https://github.com/sahil3982/vigil/releases/download/v$Version/vigil_v$Version_windows_$Arch.tar.gz"
 
 Write-Host "📥 Downloading vigil v$Version for Windows/$Arch..." -ForegroundColor Cyan
 
-# Create temp directory
 $TempDir = New-TemporaryFile | ForEach-Object { Remove-Item $_; New-Item -ItemType Directory -Path $_ }
 $ZipPath = Join-Path $TempDir "vigil.tar.gz"
 
 try {
-    # Download
     Invoke-WebRequest -Uri $Url -OutFile $ZipPath
 
-    # Extract using PowerShell (instead of tar)
+    # ✅ FIX: Use PowerShell native extractor
     $ExtractDir = Join-Path $TempDir "extract"
     New-Item -ItemType Directory -Path $ExtractDir -Force | Out-Null
 
-    # ✅ Use PowerShell's built-in archive extractor
     Expand-Archive -Path $ZipPath -DestinationPath $ExtractDir -Force
 
-    # Create install dir
     New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
 
-    # Move vigil.exe
     $ExePath = Get-ChildItem -Path $ExtractDir -Filter "vigil.exe" | Select-Object -First 1
     if ($ExePath) {
         $TargetPath = Join-Path $InstallDir "vigil.exe"
@@ -52,7 +48,6 @@ try {
         exit 1
     }
 
-    # Add to PATH if not already there
     $CurrentPath = [System.Environment]::GetEnvironmentVariable("PATH", "User")
     if ($CurrentPath -notlike "*$InstallDir*") {
         [System.Environment]::SetEnvironmentVariable("PATH", "$CurrentPath;$InstallDir", "User")
@@ -68,6 +63,5 @@ catch {
     exit 1
 }
 finally {
-    # Cleanup
     Remove-Item $TempDir -Recurse -Force -ErrorAction SilentlyContinue
 }
