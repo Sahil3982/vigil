@@ -46,14 +46,14 @@ jobs:
       - name: Add install scripts to release
         run: |
           cp install.sh dist/
-          cp install.ps1 dist/  # ✅ ADD THIS LINE
+          cp install.ps1 dist/  #  ADD THIS LINE
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
           body: |
-            ## 🕵️ vigil v${{ github.ref_name }}
+            ##  vigil v${{ github.ref_name }}
             Lightweight system monitor for terminals.
             - CPU, Memory, Disk usage
             - Profile any command: `vigil exec -- go build`

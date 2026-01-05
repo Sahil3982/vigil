@@ -28,7 +28,7 @@ func (h *HumanFormatter) statusIcon(percent float64) string {
 	if percent > 80 {
 		return color.YellowString("⚠️")
 	}
-	return color.GreenString("✅")
+	return color.GreenString("")
 }
 
 func (h *HumanFormatter) CPU(w io.Writer, stat CPUStat) error {
@@ -71,9 +71,9 @@ func (h *HumanFormatter) Disk(w io.Writer, stat DiskStat) error {
 }
 
 func (h *HumanFormatter) Exec(w io.Writer, stat ExecStat) error {
-	status := "✅"
+	status := ""
 	if stat.ExitCode != 0 {
-		status = "❌"
+		status = ""
 	}
 	if h.Quiet {
 		_, err := fmt.Fprintf(w, "%d", stat.ExitCode)

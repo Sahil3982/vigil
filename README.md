@@ -1,4 +1,4 @@
-# 🕵️ vigil — Lightweight System Monitor for Terminals
+#  vigil — Lightweight System Monitor for Terminals
 
 > **Check CPU, Memory, Disk — and *profile any command* — in <10ms startup, <8MB binary.**
 >
@@ -37,15 +37,15 @@ curl -sfL https://raw.githubusercontent.com/sahil3982/vigil/main/install.sh | sh
 ```bash
 # Check CPU usage
 $ vigil cpu
-▶ CPU: [■■■■■■□□□□] 62.3% ✅
+▶ CPU: [■■■■■■□□□□] 62.3% 
 
 # Check memory usage
 $ vigil mem
-▶ RAM: [■■■■■■■□□□] 72.1% (11.5/16.0 GB) ✅
+▶ RAM: [■■■■■■■□□□] 72.1% (11.5/16.0 GB) 
 
 # Check disk usage
 $ vigil disk
-▶ Disk /: [■■■■■■■□□□] 72.1% (215.4/300.0 GB) ✅
+▶ Disk /: [■■■■■■■□□□] 72.1% (215.4/300.0 GB) 
 ```
 
 ### Profile Any Command
@@ -54,7 +54,7 @@ $ vigil disk
 $ vigil exec -- go build main.go
 ▶ Running: go build main.go
 ──────────────────────────────────────
-▶ Finished in 2.41s ✅
+▶ Finished in 2.41s 
    CPU: avg 88%
    RAM: peak 1240.5 MB
    Exit code: 0

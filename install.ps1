@@ -9,11 +9,11 @@ if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") {
 }
 
 if ($Version -eq "latest") {
-    Write-Host "🔍 Fetching latest version..." -ForegroundColor Cyan
+    Write-Host " Fetching latest version..." -ForegroundColor Cyan
     $ReleaseInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/sahil3982/vigil/releases/latest" -ErrorAction Stop
     $Version = $ReleaseInfo.tag_name
     if (-not $Version) {
-        Write-Error "❌ No release found"
+        Write-Error " No release found"
         exit 1
     }
 }
@@ -21,7 +21,7 @@ if ($Version -eq "latest") {
 # Remove 'v' prefix for URL construction
 $VersionNumber = $Version.TrimStart('v')
 
-Write-Host "📥 Downloading vigil $Version for Windows/$Arch..." -ForegroundColor Cyan
+Write-Host " Downloading vigil $Version for Windows/$Arch..." -ForegroundColor Cyan
 
 $TempDir = New-TemporaryFile | ForEach-Object { Remove-Item $_; New-Item -ItemType Directory -Path $_ }
 
@@ -71,7 +71,7 @@ try {
     }
     
     if (-not $success) {
-        Write-Error "❌ Failed to download from any URL pattern"
+        Write-Error " Failed to download from any URL pattern"
         exit 1
     }
 
@@ -81,9 +81,9 @@ try {
     if ($ExePath) {
         $TargetPath = Join-Path $InstallDir "vigil.exe"
         Move-Item -Path $ExePath.FullName -Destination $TargetPath -Force
-        Write-Host "✅ Installed to: $TargetPath" -ForegroundColor Green
+        Write-Host " Installed to: $TargetPath" -ForegroundColor Green
     } else {
-        Write-Error "❌ vigil.exe not found in archive"
+        Write-Error " vigil.exe not found in archive"
         exit 1
     }
 
@@ -94,10 +94,10 @@ try {
         Write-Host "🔧 Added to PATH (restart terminal to apply)" -ForegroundColor Yellow
     }
 
-    Write-Host "🎉 Done! Run 'vigil --help' to get started." -ForegroundColor Green
+    Write-Host " Done! Run 'vigil --help' to get started." -ForegroundColor Green
 }
 catch {
-    Write-Error "❌ Installation failed: $_"
+    Write-Error " Installation failed: $_"
     exit 1
 }
 finally {

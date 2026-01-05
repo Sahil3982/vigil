@@ -64,10 +64,10 @@ var serveCmd = &cobra.Command{
 		fmt.Printf("📈 %s http://localhost:%d/api/v1/metrics/history\n", cyan("History API:"), port)
 		fmt.Printf("💻 %s http://localhost:%d/api/v1/system/info\n", cyan("System Info:"), port)
 		fmt.Printf("⚙️  %s http://localhost:%d/api/v1/processes\n", cyan("Process List:"), port)
-		fmt.Printf("🔍 %s\n\n", cyan("Use Ctrl+C to stop"))
+		fmt.Printf(" %s\n\n", cyan("Use Ctrl+C to stop"))
 
 		if err := http.ListenAndServe(addr, nil); err != nil {
-			color.Red("❌ Failed to start server: %v", err)
+			color.Red(" Failed to start server: %v", err)
 			os.Exit(1)
 		}
 	},
@@ -302,41 +302,41 @@ func handleSystemInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleProcesses(w http.ResponseWriter, r *http.Request) {
-    processes, err := process.Processes()
-    if err != nil {
-        w.Header().Set("Content-Type", "application/json")
-        w.WriteHeader(http.StatusInternalServerError)
-        json.NewEncoder(w).Encode(map[string]interface{}{
-            "error": fmt.Sprintf("Failed to get processes: %v", err),
-        })
-        return
-    }
-    
-    var processList []map[string]interface{}
-    
-    for _, p := range processes {
-        name, _ := p.Name()
-        mem, _ := p.MemoryInfo()
-        cpu, _ := p.CPUPercent()
-        
-        // Handle nil memory info
-        var rss, vms uint64
-        if mem != nil {
-            rss = mem.RSS
-            vms = mem.VMS
-        }
-        
-        processList = append(processList, map[string]interface{}{
-            "pid":     p.Pid,
-            "name":    name,
-            "cpu":     cpu,
-            "mem_rss": rss,
-            "mem_vms": vms,
-        })
-    }
-    
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(processList)
+	processes, err := process.Processes()
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"error": fmt.Sprintf("Failed to get processes: %v", err),
+		})
+		return
+	}
+
+	var processList []map[string]interface{}
+
+	for _, p := range processes {
+		name, _ := p.Name()
+		mem, _ := p.MemoryInfo()
+		cpu, _ := p.CPUPercent()
+
+		// Handle nil memory info
+		var rss, vms uint64
+		if mem != nil {
+			rss = mem.RSS
+			vms = mem.VMS
+		}
+
+		processList = append(processList, map[string]interface{}{
+			"pid":     p.Pid,
+			"name":    name,
+			"cpu":     cpu,
+			"mem_rss": rss,
+			"mem_vms": vms,
+		})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(processList)
 }
 
 func handleNetworkStats(w http.ResponseWriter, r *http.Request) {
